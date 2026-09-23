@@ -23,10 +23,10 @@ The system is split into a low-latency Rust core and flexible Python sidecars. T
 ## Trading Logic 
 
 The system operates using a maker-taker hedging strategy:
-*   **Making Wide on Primary:** The engine calculates a fair value midpoint and places wide, resting passive limit orders (post-only) on the primary exchange (Binance)[cite: 6, 7]. These quotes are dynamically widened during periods of high volatility to manage risk.
-*   **Opposing Hedge on Fill:** When a resting quote is hit (filled) on Binance, the system immediately dispatches an opposing market order to one of the sidecar exchanges (Aster or Lighter) to hedge the position[cite: 1, 4, 6]. For example, if a BUY order fills on Binance, a corresponding SELL hedge is queued[cite: 6].
-*   **Dust Accumulation:** Small partial fills are accumulated in a queue[cite: 6]. The sidecar is only triggered to fire the market order once the queued volume reaches a minimum threshold (`MIN_HEDGE_QTY`)[cite: 6].
-*   **NOTE:** Cross-venue hedging must be explicitly activated by setting `HEDGING_ENABLED = true` in the core[cite: 6].
+*   **Making Wide on Primary:** The engine calculates a fair value midpoint and places wide, resting passive limit orders (post-only) on the primary exchange (Binance). These quotes are dynamically widened during periods of high volatility to manage risk.
+*   **Opposing Hedge on Fill:** When a resting quote is hit (filled) on Binance, the system immediately dispatches an opposing market order to one of the sidecar exchanges (Aster or Lighter) to hedge the position. For example, if a BUY order fills on Binance, a corresponding SELL hedge is queued.
+*   **Dust Accumulation:** Small partial fills are accumulated in a queue[cite: 6]. The sidecar is only triggered to fire the market order once the queued volume reaches a minimum threshold (`MIN_HEDGE_QTY`).
+*   **NOTE:** Cross-venue hedging must be explicitly activated by setting `HEDGING_ENABLED = true` in the core.
 ## Setup & Build Instructions
 
 ### 1. Build the Rust Core
