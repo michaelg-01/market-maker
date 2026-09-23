@@ -20,15 +20,13 @@ The system is split into a low-latency Rust core and flexible Python sidecars. T
     *   Manages account nonces and signs WebSocket transactions.
     *   Listens to Lighter's account channels to reconcile partial and full fills.
 
-## Trading Logic & Risk Management
+## Trading Logic 
 
-The engine employs a defensive, fair-value-driven pricing model designed to survive highly volatile market conditions. 
-
-*   **Fair Value Pricing:** The system anchors its base price to the "non-self mid"—the midpoint of the best bid and ask on the primary venue, explicitly filtering out its own resting orders to avoid self-referential pricing loops.
-*   **Volatility Scaling:** Spread edge and step-behind parameters are dynamically multiplied when trailing volatility spikes, widening quotes to compensate for adverse selection risk.
-*   **Impulse & Jump Detectors:** The system continuously monitors an anchor market (e.g., the highly liquid ETHUSDT pair) for sudden price jumps or heavily one-sided taker flow. If a threshold is breached, it immediately pulls quotes until the market stabilizes.
-*   **Directional Imbalance Protection:** If the top-of-book size ratio becomes excessively skewed (e.g., massive ask size vs. minimal bid size), the system will cancel the threatened side of its quote to avoid being run over by the impending momentum.
-
+The system operates using a maker-taker hedging strategy:
+*   **Making Wide on Primary:** The engine calculates a fair value midpoint and places wide, resting passive limit orders (post-only) on the primary exchange (Binance)[cite: 6, 7]. These quotes are dynamically widened during periods of high volatility to manage risk.
+*   **Opposing Hedge on Fill:** When a resting quote is hit (filled) on Binance, the system immediately dispatches an opposing market order to one of the sidecar exchanges (Aster or Lighter) to hedge the position[cite: 1, 4, 6]. For example, if a BUY order fills on Binance, a corresponding SELL hedge is queued[cite: 6].
+*   **Dust Accumulation:** Small partial fills are accumulated in a queue[cite: 6]. The sidecar is only triggered to fire the market order once the queued volume reaches a minimum threshold (`MIN_HEDGE_QTY`)[cite: 6].
+*   **NOTE:** Cross-venue hedging must be explicitly activated by setting `HEDGING_ENABLED = true` in the core[cite: 6].
 ## Setup & Build Instructions
 
 ### 1. Build the Rust Core
