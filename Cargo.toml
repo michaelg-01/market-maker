@@ -1,0 +1,39 @@
+[package]
+name = "mm_binny"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1", features = ["full", "parking_lot"] }
+anyhow = "1"
+
+# TLS for FIX TCP sessions
+tokio-rustls = "0.26"
+rustls = { version = "0.23", features = ["ring"] }
+rustls-native-certs = "0.8"
+
+# Crypto — Ed25519 for FIX logon
+ed25519-dalek = { version = "2", features = ["pkcs8", "pem"] }
+base64 = "0.22"
+
+# Hot-path utilities
+fast-float = "0.2"
+memchr = "2"
+quanta = "0.12"
+core_affinity = "0.8"
+crossbeam-queue = "0.3"
+parking_lot = "0.12"
+
+# Binance USD-M futures market data (WebSocket JSON — no SBE/FIX for futures)
+tokio-tungstenite = { version = "0.24", features = ["rustls-tls-native-roots"] }
+futures-util = "0.3"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+strip = true
+panic = "abort"
+debug = false
