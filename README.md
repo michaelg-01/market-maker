@@ -1,12 +1,12 @@
 # MM
 
-A fast Rust-based market maker for Binance Spot that hedges on decentralized exchanges.
+A fast Rust-based market maker for Binance Spot that hedges on decentralized exchanges. The decentralized exchange should have a tighter spread than the corresponding asset on Binance Spot for it to work.
 
 ## How It Works
 
-* **Quoting:** The Rust core calculates a fair value and places wide limit orders on Binance.
+* **Quoting:** Calculates a fair value and places wide limit orders on Binance.
 
-* **Hedging:** When a Binance order fills, an opposing order is sent.
+* **Hedging:** When a Binance order fills, an opposing market order is sent on the decentralized exchange.
 
 
 ## Setup
